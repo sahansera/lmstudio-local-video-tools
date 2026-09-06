@@ -1,14 +1,18 @@
 # Local Video Tools for LM Studio
 
 <p align="center">
-  <strong>Let your local AI inspect, trim, convert and process video files — locally, with FFmpeg.</strong>
+  <strong>Edit video with your local AI.</strong>
+</p>
+
+<p align="center">
+  Inspect, trim and convert videos directly from LM Studio using FFmpeg — private, hardware accelerated, and built for long-running video jobs.
 </p>
 
 <p align="center">
   Native LM Studio plugin · TypeScript · FFmpeg · Privacy-first · Hardware accelerated
 </p>
 
-> **Early preview:** the project is under active development. The core video inspection, clipping, conversion and background-job workflow is already implemented, but the public API may still evolve before the first stable release.
+> **Early Preview — v0.1.0:** the core inspection, clipping, conversion and background-job workflows have been validated with real 4K HEVC media on macOS. Tool schemas and behavior may still evolve as the project gets broader platform testing.
 
 ## Why this exists
 
@@ -63,8 +67,6 @@ brew install ffmpeg
 ```bash
 git clone https://github.com/sahansera/lmstudio-local-video-tools.git
 cd lmstudio-local-video-tools
-
-git checkout feat/milestone-1
 npm install
 npm test
 lms dev --install
@@ -85,6 +87,27 @@ For a fast trim:
 For a hardware-accelerated transcode:
 
 > Convert this video to 1920px-wide H.264 MP4 using hardware acceleration if available.
+
+For an accurate clip:
+
+> Create an accurate clip from exactly 2.0 seconds to 10.0 seconds.
+
+For a running background job:
+
+> Check the status of that video conversion.
+
+## Validated v0.1.0 workflow
+
+The first release candidate has been exercised against a real 3840×2160 HEVC/H.265 MOV workflow on Apple Silicon:
+
+- metadata inspection through ffprobe;
+- fast lossless stream-copy clipping;
+- accurate clipping through background re-encoding;
+- 4K HEVC → 1080p H.264 conversion using `h264_videotoolbox`;
+- background job progress/status reporting;
+- cancellation and FFmpeg process cleanup.
+
+This is intentionally an **Early Preview**: macOS is the best-tested platform for v0.1.0, while Windows/Linux and additional FFmpeg builds need broader community validation.
 
 ## How it works
 
@@ -119,105 +142,92 @@ clip_video
    ↓
 no re-encode needed
    ↓
--ss ... -i ... -t ... -c copy
+FFmpeg -c copy
    ↓
-completed result
+return output path
 ```
 
-Expensive operations are intentionally asynchronous:
+This is fast and avoids generation loss, but the start position can be limited by source keyframes.
+
+Operations that require re-encoding are handled differently:
 
 ```text
-convert_video
+convert_video / accurate clip
    ↓
-start FFmpeg job
+create background job
    ↓
-return jobId immediately
+return job ID immediately
    ↓
-video_job_status
+FFmpeg continues locally
    ↓
-progress / speed / completion
+video_job_status → progress / speed / result
 ```
 
-This design avoids the long-running tool-call timeout problems that can occur when processing high-resolution HEVC video.
+This avoids treating a long video encode like a single long-running model tool call.
 
 ## Hardware acceleration
 
-When **Hardware Acceleration** is set to `Auto`, the plugin detects supported encoders and prefers hardware acceleration where possible:
+When hardware acceleration is enabled, the plugin probes the local FFmpeg build and prefers an available hardware encoder.
 
-| Platform / hardware | Preferred encoders |
+| Platform / hardware | Preferred path |
 | --- | --- |
-| Apple Silicon / macOS | `h264_videotoolbox`, `hevc_videotoolbox` |
-| NVIDIA | `h264_nvenc`, `hevc_nvenc` |
-| Intel | `h264_qsv`, `hevc_qsv` |
-| Fallback | `libx264`, `libx265` |
+| Apple Silicon / macOS | VideoToolbox |
+| NVIDIA GPU | NVENC |
+| Intel | Quick Sync Video |
+| Other / unsupported | CPU encoder fallback |
 
-Hardware availability depends on your FFmpeg build and system configuration.
-
-## Privacy and filesystem safety
-
-Video processing is performed locally through FFmpeg. This plugin does not intentionally upload video files to a remote processing service.
-
-Attached videos are staged under the plugin working directory, and generated outputs stay under the configured output directory. Arbitrary external file paths are disabled by default and must be explicitly enabled in plugin settings.
-
-As with any local AI workflow, review the model's requested tool actions before using the plugin on sensitive or irreplaceable media.
+Hardware support depends on the FFmpeg build and machine. The plugin falls back to software encoding when a supported hardware encoder is not available.
 
 ## Configuration
 
-| Setting | Default | Description |
+The plugin exposes configuration for:
+
+| Setting | Default | Purpose |
 | --- | --- | --- |
-| FFmpeg Path | Auto | Optional explicit path to `ffmpeg` |
-| FFprobe Path | Auto | Optional explicit path to `ffprobe` |
-| Output Subdirectory | `local-video-tools/outputs` | Output location inside the working directory |
-| Hardware Acceleration | Auto | Prefer supported hardware encoders |
-| Allow External File Paths | Off | Permit reading files outside the working directory |
-| Maximum Job Time | 2 hours | Maximum FFmpeg process runtime |
+| FFmpeg path | Auto-detect | Override the `ffmpeg` executable |
+| ffprobe path | Auto-detect | Override the `ffprobe` executable |
+| Output directory | `local-video-tools/outputs` | Working-directory-relative output location |
+| Hardware acceleration | `auto` | Prefer supported hardware encoders |
+| External paths | Disabled | Allow files outside the LM Studio working directory |
+| Maximum job duration | 2 hours | Upper bound for long-running FFmpeg work |
+
+## Privacy and safety
+
+Local Video Tools is designed for local media workflows:
+
+- video processing is performed by your local FFmpeg installation;
+- the plugin does not upload videos to a video-processing service;
+- attached videos are staged into the LM Studio plugin working directory;
+- arbitrary external filesystem paths are disabled by default;
+- FFmpeg is spawned with argument arrays rather than shell command strings;
+- subprocess output is bounded;
+- running jobs support cancellation and timeout cleanup.
+
+Remember that the language model and LM Studio environment you choose have their own privacy characteristics. This plugin only controls its own video-processing behavior.
+
+## Project status
+
+**v0.1.0 Early Preview** focuses on a reliable native LM Studio foundation: inspect, clip, convert, background progress, cancellation, safe file handling and hardware-encoder selection.
+
+See [docs/roadmap.md](docs/roadmap.md) for planned work.
 
 ## Development
 
 ```bash
 npm install
-npm test
 npm run typecheck
+npm test
 lms dev
 ```
 
-The project is a native LM Studio TypeScript plugin and uses the LM Studio SDK rather than MCP for the primary integration.
-
-Architecture notes are available in [`docs/architecture.md`](docs/architecture.md).
-
-## Roadmap
-
-Near-term priorities:
-
-- [x] Native LM Studio tools provider
-- [x] Attachment staging
-- [x] ffprobe inspection
-- [x] Fast stream-copy clipping
-- [x] Accurate background clipping
-- [x] Background conversion jobs
-- [x] Job progress and cancellation
-- [x] VideoToolbox / NVENC / QSV detection
-- [ ] `extract_frame`
-- [ ] `extract_audio`
-- [ ] Dedicated `resize_video`
-- [ ] Video concatenation
-- [ ] Overlays and subtitles
-- [ ] Keyframe-aware trim guidance
-- [ ] Expanded automated integration tests
-- [ ] LM Studio Hub release
-
-See [`docs/roadmap.md`](docs/roadmap.md) for the broader direction.
+The plugin targets the Node.js runtime bundled by LM Studio.
 
 ## Contributing
 
-Contributions, bug reports and design feedback are welcome. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
+Contributions and focused bug reports are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request and use the issue templates for reproducible bugs or feature proposals.
 
-If you find a security-sensitive issue, please follow [`SECURITY.md`](SECURITY.md) rather than opening a public issue.
-
-## Project status
-
-This project is currently an **early preview** and is being tested against real local-video workflows, including 4K HEVC media. Expect breaking changes until the first stable release.
+Security-sensitive reports should follow [SECURITY.md](SECURITY.md).
 
 ## License
 
-Licensed under the [MIT License](LICENSE).
+MIT. See [LICENSE](LICENSE).
