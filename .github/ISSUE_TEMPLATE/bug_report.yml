@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible problem with Local Video Tools
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please avoid uploading private videos or sensitive filesystem paths.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the operation, expected behavior, and actual behavior.
+    validations:
+      required: true
+  - type: input
+    id: lmstudio
+    attributes:
+      label: LM Studio version
+      placeholder: e.g. 0.x.x
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system / architecture
+      placeholder: e.g. macOS 15, Apple Silicon
+    validations:
+      required: true
+  - type: input
+    id: ffmpeg
+    attributes:
+      label: FFmpeg version
+      placeholder: Output summary from ffmpeg -version
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Input media details
+      description: Include container, codec, resolution and duration from inspect_video where possible.
+  - type: textarea
+    id: tool
+    attributes:
+      label: Tool call / prompt
+      description: Which Local Video Tools operation was requested?
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error or relevant output
+      render: text
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
