@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest a focused improvement for Local Video Tools
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the user workflow rather than only the proposed implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: What should the model or plugin be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: tool_surface
+    attributes:
+      label: Tool-surface impact
+      description: Could this fit an existing tool, or does it genuinely need a new model-visible tool?
+  - type: textarea
+    id: ffmpeg
+    attributes:
+      label: FFmpeg approach
+      description: If known, include the relevant FFmpeg behavior or command pattern.
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Platforms
+      multiple: true
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - All / unknown
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
