@@ -107,6 +107,7 @@ export async function runCommand(
 
     const abortHandler = () => terminate();
     options.signal?.addEventListener("abort", abortHandler, { once: true });
+    if (options.signal?.aborted) terminate();
 
     const timeout = options.timeoutMs
       ? setTimeout(terminate, options.timeoutMs)
@@ -157,7 +158,7 @@ async function commandWorks(command: string): Promise<boolean> {
 }
 
 function candidatePaths(binaryName: "ffmpeg" | "ffprobe"): string[] {
-  const candidates = [binaryName];
+  const candidates: string[] = [binaryName];
 
   if (process.platform === "darwin") {
     candidates.push(
