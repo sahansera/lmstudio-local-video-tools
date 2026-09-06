@@ -1,7 +1,27 @@
 {
   "name": "lmstudio-local-video-tools",
   "version": "0.1.0",
-  "description": "Local video inspection and editing tools for LM Studio, powered by FFmpeg.",
+  "description": "Native LM Studio video tools for local inspection, trimming, conversion and processing with FFmpeg.",
+  "keywords": [
+    "lm-studio",
+    "lmstudio",
+    "ffmpeg",
+    "video",
+    "local-ai",
+    "ai-tools",
+    "typescript",
+    "video-processing",
+    "hevc",
+    "h264"
+  ],
+  "homepage": "https://github.com/sahansera/lmstudio-local-video-tools#readme",
+  "bugs": {
+    "url": "https://github.com/sahansera/lmstudio-local-video-tools/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahansera/lmstudio-local-video-tools.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
