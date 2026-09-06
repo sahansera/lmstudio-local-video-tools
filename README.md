@@ -10,6 +10,7 @@ This repository is an independent TypeScript implementation designed specificall
 
 Milestone 1 currently provides:
 
+- Automatic video attachment staging — attach a supported video in LM Studio and the prompt preprocessor stages it into the plugin working directory, then gives the model the exact local path to use.
 - `inspect_video` — concise ffprobe metadata and detected encoder capabilities.
 - `clip_video` — fast lossless stream-copy trimming, plus accurate background re-encoding.
 - `convert_video` — background H.264/HEVC conversion with optional resize.
@@ -59,35 +60,36 @@ LM Studio's plugin runner uses Node.js, and the project targets the current nati
 
 ## Example workflows
 
-### Inspect a 4K HEVC file
+### Attach and inspect a video
 
-Ask the model:
+Attach `IMG_1435.MOV` to an LM Studio message and ask:
 
-> Inspect `/path/to/IMG_1435.MOV` and tell me its codec, resolution and duration.
+> Inspect this video and tell me its codec, resolution and duration.
+
+The prompt preprocessor copies the attachment into `local-video-tools/inputs` under LM Studio's working directory and gives the model the staged path automatically.
 
 ### Fast clip without quality loss
 
-> Cut seconds 2 through 10 from `/path/to/IMG_1435.MOV` without changing quality.
+> Cut seconds 2 through 10 from this video without changing quality.
 
 The plugin uses input-side seeking and stream copy (`-c copy`) where possible.
 
 ### Convert a 4K HEVC video to 1080p H.264
 
-> Convert `/path/to/IMG_1435.MOV` to 1920px-wide H.264.
+> Convert this video to 1920px-wide H.264.
 
 This starts a background job. On a supported Mac, the plugin prefers `h264_videotoolbox`; otherwise it falls back to another supported hardware encoder or `libx264`.
 
 ## Safety and filesystem access
 
-Outputs are always written inside the configured output directory under LM Studio's working directory. Reading absolute paths outside the working directory is disabled by default.
+Attached videos are staged inside `local-video-tools/inputs` under LM Studio's working directory. Outputs are always written inside the configured output directory under the same working directory. Reading arbitrary absolute paths outside the working directory is disabled by default.
 
-A later milestone will add attachment staging so users can work with attached videos without enabling arbitrary external file access.
+This lets the normal attachment workflow work without granting the model broad filesystem access.
 
 ## Roadmap
 
 Next planned tools and capabilities:
 
-- Video attachment staging / prompt preprocessing.
 - `resize_video` as a focused convenience tool.
 - `extract_frame` and `extract_audio`.
 - Concatenation and overlays.
