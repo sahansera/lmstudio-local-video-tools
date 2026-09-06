@@ -6,6 +6,8 @@ The project is currently in early preview, so behavior and tool schemas may chan
 
 ## Unreleased
 
+## 0.1.0 - 2026-09-07
+
 ### Added
 
 - Native LM Studio TypeScript plugin foundation.
@@ -21,3 +23,10 @@ The project is currently in early preview, so behavior and tool schemas may chan
 - Safer default filesystem boundaries.
 - Initial unit tests and GitHub Actions CI.
 - OSS contribution, security, issue and pull-request templates.
+
+### Validated
+
+- Real-world 4K HEVC/H.265 inspection and lossless clipping on macOS.
+- Accurate background clipping.
+- 4K HEVC to 1080p H.264 conversion with Apple VideoToolbox.
+- Background progress/status reporting and job cancellation.
