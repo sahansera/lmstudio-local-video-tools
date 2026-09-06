@@ -1,0 +1,23 @@
+{
+  "name": "lmstudio-local-video-tools",
+  "version": "0.1.0",
+  "description": "Local video inspection and editing tools for LM Studio, powered by FFmpeg.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "lms dev",
+    "push": "lms push",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test tests/*.test.cjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@lmstudio/sdk": "^1.5.0",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "typescript": "^5.9.3"
+  }
+}
