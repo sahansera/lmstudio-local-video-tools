@@ -35,6 +35,7 @@ This roadmap describes the intended direction for Local Video Tools for LM Studi
 - [ ] Better container / codec compatibility checks
 - [ ] Preflight estimates for expensive operations
 - [ ] Hardware-decoder capability detection
+- [ ] Runtime retry from unavailable hardware encoders to software encoding
 - [ ] Improved bitrate / quality presets
 - [ ] Platform-specific tuning for Apple, NVIDIA, Intel and Linux VAAPI
 
@@ -44,7 +45,7 @@ This roadmap describes the intended direction for Local Video Tools for LM Studi
 - [ ] Improved model-facing error taxonomy
 - [ ] Optional progress notifications in LM Studio
 - [ ] Better handling of multiple attached videos
-- [ ] Safer overwrite behavior
+- [x] Safer overwrite behavior
 - [ ] Discoverability improvements and examples for smaller local models
 
 ## Milestone 5 — OSS and distribution
@@ -52,7 +53,7 @@ This roadmap describes the intended direction for Local Video Tools for LM Studi
 - [ ] Expanded automated integration tests
 - [ ] Test matrix across macOS, Windows and Linux
 - [ ] Example media fixtures that can be redistributed legally
-- [ ] First tagged release
+- [x] First tagged release
 - [ ] LM Studio Hub submission
 - [ ] Installation and troubleshooting docs
 - [ ] Contributor documentation for adding new tools safely
