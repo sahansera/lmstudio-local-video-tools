@@ -9,8 +9,10 @@ Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Stu
 [![Release](https://img.shields.io/github/v/tag/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release&color=brightgreen)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
 [![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge&color=brightgreen&cacheSeconds=300)](LICENSE)
-[![LM Studio Hub](https://img.shields.io/badge/LM%20Studio%20Hub-Install-6C5CE7?style=for-the-badge)](https://lmstudio.ai/sahansera/local-video-tools)
+![LM Studio](https://img.shields.io/badge/LM%20Studio-Native%20Plugin-6C5CE7?style=for-the-badge)
 ![FFmpeg](https://img.shields.io/badge/FFmpeg-Local-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)
+
+[![Add to LM Studio](https://img.shields.io/badge/Add%20to-LM%20Studio-6C5CE7?style=for-the-badge)](https://lmstudio.ai/sahansera/local-video-tools)
 
 [Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Roadmap](docs/roadmap.md)
 
