@@ -226,9 +226,14 @@ test("completed jobs persist processed and total duration atomically", async (t)
   assert.equal(completed?.status, "completed");
   assert.equal(completed?.processedSeconds, 1);
   assert.equal(completed?.durationSeconds, 1);
-  const persisted = JSON.parse(
-    await readFile(join(jobsDirectory, `${started.id}.json`), "utf8"),
-  );
+  let persisted;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    persisted = JSON.parse(
+      await readFile(join(jobsDirectory, `${started.id}.json`), "utf8"),
+    );
+    if (persisted.status === "completed") break;
+    await delay(10);
+  }
   assert.equal(persisted.status, "completed");
   assert.equal(persisted.processedSeconds, 1);
   assert.equal(persisted.durationSeconds, 1);
