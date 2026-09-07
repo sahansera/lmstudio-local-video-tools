@@ -342,7 +342,7 @@ export function buildClipArgs(options: ClipCommandOptions): string[] {
       "copy",
       "-avoid_negative_ts",
       "make_zero",
-      "-y",
+      "-n",
       options.outputPath,
     ];
   }
@@ -369,7 +369,7 @@ export function buildClipArgs(options: ClipCommandOptions): string[] {
     "-progress",
     "pipe:1",
     "-nostats",
-    "-y",
+    "-n",
     options.outputPath,
   ];
 }
@@ -404,7 +404,7 @@ export function buildConvertArgs(options: ConvertCommandOptions): string[] {
     "-progress",
     "pipe:1",
     "-nostats",
-    "-y",
+    "-n",
     options.outputPath,
   );
   return args;

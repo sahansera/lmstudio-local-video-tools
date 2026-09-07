@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { copyFile, mkdir } from "node:fs/promises";
+import { constants } from "node:fs";
+import { copyFile } from "node:fs/promises";
 import { basename, extname, join, relative } from "node:path";
 import { ChatMessage, PromptPreprocessorController } from "@lmstudio/sdk";
+import { canonicalizeWorkingDirectory, ensureDirectoryInside } from "./pathSafety";
 
 const VIDEO_EXTENSIONS = new Set([
   ".3gp",
@@ -46,9 +48,12 @@ export async function preprocess(
 
   if (attachedVideos.length === 0) return userMessage;
 
-  const workingDirectory = ctl.getWorkingDirectory();
-  const inputDirectory = join(workingDirectory, "local-video-tools", "inputs");
-  await mkdir(inputDirectory, { recursive: true });
+  const workingDirectory = await canonicalizeWorkingDirectory(ctl.getWorkingDirectory());
+  const inputDirectory = await ensureDirectoryInside(
+    workingDirectory,
+    "local-video-tools/inputs",
+    "The Local Video Tools input directory must stay inside LM Studio's working directory and cannot use symlinked directories.",
+  );
 
   const videos = userMessage.consumeFiles(ctl.client, (file) => isVideoName(file.name));
   const staged: string[] = [];
@@ -67,7 +72,7 @@ export async function preprocess(
         inputDirectory,
         `${randomUUID().slice(0, 8)}-${safeFileName(file.name)}`,
       );
-      await copyFile(sourcePath, destination);
+      await copyFile(sourcePath, destination, constants.COPYFILE_EXCL);
       const relativePath = relative(workingDirectory, destination).replaceAll("\\", "/");
       staged.push(
         [

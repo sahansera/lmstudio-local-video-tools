@@ -1,6 +1,5 @@
 import { tool, Tool, ToolsProviderController } from "@lmstudio/sdk";
-import { mkdir, stat } from "node:fs/promises";
-import { basename, extname, isAbsolute, relative, resolve } from "node:path";
+import { basename, extname, resolve } from "node:path";
 import { z } from "zod";
 import { configSchematics } from "./config";
 import {
@@ -16,26 +15,18 @@ import {
   type VideoCodec,
 } from "./ffmpeg";
 import { JobManager } from "./jobs";
-
-function isPathInside(parent: string, child: string): boolean {
-  const rel = relative(parent, child);
-  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
-}
+import {
+  canonicalizeWorkingDirectory,
+  ensureDirectoryInside,
+  resolveExistingFilePath,
+} from "./pathSafety";
 
 async function resolveInputPath(
   input: string,
   workingDirectory: string,
   allowExternalPaths: boolean,
 ): Promise<string> {
-  const path = isAbsolute(input) ? resolve(input) : resolve(workingDirectory, input);
-  if (!allowExternalPaths && !isPathInside(workingDirectory, path)) {
-    throw new Error(
-      "External file paths are disabled. Move the video into LM Studio's working directory or enable Allow External File Paths in plugin settings.",
-    );
-  }
-  const info = await stat(path).catch(() => null);
-  if (!info?.isFile()) throw new Error(`Video file does not exist: ${path}`);
-  return path;
+  return await resolveExistingFilePath(input, workingDirectory, allowExternalPaths);
 }
 
 async function resolveOutputDirectory(
@@ -43,12 +34,11 @@ async function resolveOutputDirectory(
   configuredSubdirectory: string,
 ): Promise<string> {
   const subdirectory = configuredSubdirectory.trim() || "local-video-tools/outputs";
-  const directory = resolve(workingDirectory, subdirectory);
-  if (!isPathInside(workingDirectory, directory)) {
-    throw new Error("Output Subdirectory must stay inside LM Studio's working directory.");
-  }
-  await mkdir(directory, { recursive: true });
-  return directory;
+  return await ensureDirectoryInside(
+    workingDirectory,
+    subdirectory,
+    "Output Subdirectory must stay inside LM Studio's working directory and cannot use symlinked directories.",
+  );
 }
 
 function outputNameFor(
@@ -58,7 +48,11 @@ function outputNameFor(
   requestedName?: string,
 ): string {
   if (requestedName?.trim()) {
-    return basename(requestedName.trim());
+    const name = basename(requestedName.trim());
+    if (!name || name === "." || name === "..") {
+      throw new Error("output_name must be a filename, not a directory path.");
+    }
+    return name;
   }
   const source = basename(inputPath, extname(inputPath));
   return `${source}-${suffix}${extension}`;
@@ -73,6 +67,8 @@ function serializeJob(job: ReturnType<JobManager["get"]>) {
     progressPercent:
       job.progressPercent === undefined ? undefined : Math.round(job.progressPercent * 10) / 10,
     speed: job.speed,
+    processedSeconds: job.processedSeconds,
+    durationSeconds: job.durationSeconds,
     inputPath: job.inputPath,
     outputPath: job.outputPath,
     startedAt: job.startedAt,
@@ -82,8 +78,13 @@ function serializeJob(job: ReturnType<JobManager["get"]>) {
 }
 
 export async function toolsProvider(ctl: ToolsProviderController): Promise<Tool[]> {
-  const workingDirectory = resolve(ctl.getWorkingDirectory());
-  const jobManager = new JobManager(resolve(workingDirectory, ".local-video-tools/jobs"));
+  const workingDirectory = await canonicalizeWorkingDirectory(ctl.getWorkingDirectory());
+  const jobsDirectory = await ensureDirectoryInside(
+    workingDirectory,
+    ".local-video-tools/jobs",
+    "The Local Video Tools job directory must stay inside LM Studio's working directory and cannot use symlinked directories.",
+  );
+  const jobManager = new JobManager(jobsDirectory);
   await jobManager.initialize();
 
   const getConfig = () => ctl.getPluginConfig(configSchematics);
@@ -120,7 +121,11 @@ export async function toolsProvider(ctl: ToolsProviderController): Promise<Tool[
       workingDirectory,
       String(getConfig().get("outputSubdirectory") ?? ""),
     );
-    return resolve(directory, outputNameFor(inputPath, suffix, extension, requested));
+    const outputPath = resolve(directory, outputNameFor(inputPath, suffix, extension, requested));
+    if (resolve(outputPath, "..") !== directory) {
+      throw new Error("Output files must stay directly inside the configured output directory.");
+    }
+    return outputPath;
   };
 
   const inspectVideo = tool({

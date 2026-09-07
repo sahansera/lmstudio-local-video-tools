@@ -6,17 +6,17 @@
 
 Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without turning a video encode into one giant tool call.
 
-[![Release](https://img.shields.io/github/v/release/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release)](https://github.com/sahansera/lmstudio-local-video-tools/releases/latest)
+[![Release](https://img.shields.io/github/v/release/sahansera/lmstudio-local-video-tools?include_prereleases&style=for-the-badge&label=Release)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
 [![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge)](LICENSE)
 ![LM Studio](https://img.shields.io/badge/LM%20Studio-Native%20Plugin-6C5CE7?style=for-the-badge)
 ![FFmpeg](https://img.shields.io/badge/FFmpeg-Local-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)
 
-[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/latest) · [Roadmap](docs/roadmap.md)
+[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1) · [Roadmap](docs/roadmap.md)
 
 </div>
 
-> **v0.1.0 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation.
+> **v0.1.1 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation. This patch release also hardens filesystem and persisted-job boundaries ahead of the public preview.
 
 ---
 
@@ -48,6 +48,7 @@ No FFmpeg command memorization. No separate MCP configuration. The model chooses
 - 📈 **Track long jobs** — progress, processed time, speed, output path, and completion state.
 - 🛑 **Cancel processing** — stop a running FFmpeg job cleanly.
 - 💾 **Recover job state** — persisted jobs are visible after a plugin restart.
+- 🧯 **Avoid accidental overwrites** — generated outputs fail safely when the target filename already exists.
 - 🔒 **Stay local-first** — Local Video Tools itself does not upload your video to a remote processing service.
 
 ---
@@ -82,7 +83,7 @@ The result is a video tool surface designed for **local models**, not just a thi
 
 ## ✅ Tested on a real 4K HEVC workflow
 
-The v0.1.0 release was exercised against real **3840×2160 HEVC/H.265 MOV media on Apple Silicon**.
+The v0.1 release series was exercised against real **3840×2160 HEVC/H.265 MOV media on Apple Silicon**.
 
 | Workflow | Result |
 | --- | --- |
@@ -109,6 +110,8 @@ That workflow is the core reason this project exists.
 ### Requirements
 
 - LM Studio with native TypeScript plugin support
+- Node.js 22 or newer
+- The LM Studio `lms` CLI available on your `PATH`
 - FFmpeg and ffprobe installed locally
 
 On macOS:
@@ -192,7 +195,7 @@ When hardware acceleration is enabled, Local Video Tools probes the local FFmpeg
 
 Supported encoder detection includes `h264_videotoolbox`, `hevc_videotoolbox`, `h264_nvenc`, `hevc_nvenc`, `h264_qsv`, and `hevc_qsv`.
 
-Hardware availability depends on your machine, drivers, and FFmpeg build. Software encoding is used when a suitable hardware encoder is unavailable.
+Software encoding is selected when the FFmpeg build does not advertise a suitable hardware encoder. If an advertised encoder fails at runtime because the hardware or driver is unavailable, the job reports the FFmpeg error; automatic software retry is planned.
 
 ---
 
@@ -204,6 +207,9 @@ Local Video Tools is designed for local media workflows:
 - The plugin itself does not upload videos to a remote video-processing service.
 - Attached videos are staged inside the LM Studio working directory.
 - Arbitrary external filesystem paths are disabled by default.
+- Input paths are canonicalized, and symlinks cannot escape the working-directory boundary.
+- Runtime input, output, and job directories reject symlinked path segments.
+- FFmpeg will not overwrite an existing output file or follow an existing output symlink.
 - External path access must be explicitly enabled.
 - FFmpeg is spawned with argument arrays instead of shell command strings.
 - Subprocess output is bounded.
@@ -228,7 +234,7 @@ Your chosen language model, LM Studio configuration, and other integrations can 
 
 ## 🖥️ Platform status
 
-**macOS / Apple Silicon** is the best-tested environment for v0.1.0.
+**macOS / Apple Silicon** is the best-tested environment for the v0.1 release series.
 
 Windows/Linux discovery and NVIDIA/Intel hardware encoder support are implemented, but they need broader real-world testing across different FFmpeg builds and hardware configurations.
 
@@ -266,7 +272,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Se
 
 ### 🎬 Edit video with your local AI.
 
-[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/latest) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
+[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
 
 MIT licensed.
 

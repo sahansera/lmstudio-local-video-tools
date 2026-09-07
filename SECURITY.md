@@ -10,7 +10,7 @@ Until the first stable release, only the latest code on the active development b
 
 Please do **not** open a public GitHub issue for vulnerabilities involving command execution, path traversal, arbitrary file access, unsafe attachment handling, malicious media handling, or other issues that could expose a user's machine or data.
 
-Instead, use GitHub's private vulnerability reporting feature for this repository when it is enabled. If private reporting is not available, contact the repository owner privately through GitHub before sharing exploit details publicly.
+Instead, use [GitHub's private vulnerability reporting form](https://github.com/sahansera/lmstudio-local-video-tools/security/advisories/new). If the form is temporarily unavailable, open a minimal issue asking the maintainer to establish private contact, but do not include vulnerability details in that issue.
 
 Please include:
 
@@ -28,6 +28,9 @@ The project currently follows these defaults:
 
 - subprocesses are launched without a shell;
 - arbitrary external filesystem paths are disabled by default;
+- filesystem boundaries are checked using canonical paths;
+- runtime directories reject symlinked path segments;
+- generated videos do not overwrite existing output files;
 - attached media is staged in the plugin working directory;
 - generated outputs stay inside the configured output area;
 - subprocess output is bounded;

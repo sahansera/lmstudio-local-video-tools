@@ -1,6 +1,7 @@
 {
   "name": "lmstudio-local-video-tools",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "private": true,
   "description": "Native LM Studio video tools for local inspection, trimming, conversion and processing with FFmpeg.",
   "keywords": [
     "lm-studio",
@@ -32,6 +33,9 @@
     "test": "npm run build && node --test tests/*.test.cjs"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@lmstudio/sdk": "^1.5.0",
     "zod": "3.24.1"

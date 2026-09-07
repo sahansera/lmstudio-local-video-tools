@@ -6,6 +6,23 @@ The project is currently in early preview, so behavior and tool schemas may chan
 
 ## Unreleased
 
+## 0.1.1 - 2026-09-07
+
+### Fixed
+
+- Canonicalize input paths so symlinks cannot bypass the default working-directory boundary.
+- Reject symlinked segments in attachment, output and background-job directories.
+- Validate persisted job records and UUIDs before using them to restore state or build filenames.
+- Serialize atomic job-record writes to prevent stale progress updates from replacing final state.
+- Refuse to overwrite existing video outputs, including output symlinks.
+
+### Changed
+
+- Report processed and total duration in background-job status results.
+- Ignore LM Studio development output, staged media, generated video and job-record directories.
+- Use reproducible CI installs, lockfile-based caching and read-only workflow permissions.
+- Declare Node.js 22 as the minimum development runtime and prevent accidental npm publication.
+
 ## 0.1.0 - 2026-09-07
 
 ### Added

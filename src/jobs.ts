@@ -1,6 +1,7 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
+import { z } from "zod";
 import { parseProgressLine, ProgressState, runCommand } from "./ffmpeg";
 
 export type VideoJobStatus = "running" | "completed" | "failed" | "cancelled" | "interrupted";
@@ -18,9 +19,30 @@ export interface VideoJob {
   completedAt?: string;
   pid?: number;
   progressPercent?: number;
+  processedSeconds?: number;
+  durationSeconds: number | null;
   speed?: string;
   error?: string;
 }
+
+const videoJobSchema = z.object({
+  id: z.string().uuid(),
+  type: z.enum(["clip", "convert"]),
+  status: z.enum(["running", "completed", "failed", "cancelled", "interrupted"]),
+  inputPath: z.string(),
+  outputPath: z.string(),
+  command: z.string(),
+  args: z.array(z.string()),
+  createdAt: z.string().datetime(),
+  startedAt: z.string().datetime(),
+  completedAt: z.string().datetime().optional(),
+  pid: z.number().int().positive().optional(),
+  progressPercent: z.number().min(0).max(100).optional(),
+  processedSeconds: z.number().nonnegative().optional(),
+  durationSeconds: z.number().nonnegative().nullable().optional().default(null),
+  speed: z.string().optional(),
+  error: z.string().optional(),
+}).strict();
 
 export interface StartJobInput {
   type: VideoJob["type"];
@@ -35,6 +57,7 @@ export interface StartJobInput {
 export class JobManager {
   private readonly jobs = new Map<string, VideoJob>();
   private readonly controllers = new Map<string, AbortController>();
+  private readonly persistChains = new Map<string, Promise<void>>();
 
   public constructor(private readonly jobsDirectory: string) {}
 
@@ -44,7 +67,11 @@ export class JobManager {
     for (const file of files) {
       if (!file.endsWith(".json")) continue;
       try {
-        const job = JSON.parse(await readFile(join(this.jobsDirectory, file), "utf8")) as VideoJob;
+        const parsed = videoJobSchema.safeParse(
+          JSON.parse(await readFile(join(this.jobsDirectory, file), "utf8")),
+        );
+        if (!parsed.success || file !== `${parsed.data.id}.json`) continue;
+        const job: VideoJob = parsed.data;
         if (job.status === "running") {
           job.status = "interrupted";
           job.completedAt = new Date().toISOString();
@@ -75,6 +102,7 @@ export class JobManager {
       createdAt: now,
       startedAt: now,
       progressPercent: 0,
+      durationSeconds: input.durationSec,
     };
 
     const controller = new AbortController();
@@ -100,11 +128,14 @@ export class JobManager {
         for (const line of lines) {
           parseProgressLine(line, progressState);
         }
-        if (progressState.outTimeSec !== undefined && input.durationSec && input.durationSec > 0) {
-          job.progressPercent = Math.max(
-            0,
-            Math.min(100, (progressState.outTimeSec / input.durationSec) * 100),
-          );
+        if (progressState.outTimeSec !== undefined) {
+          job.processedSeconds = progressState.outTimeSec;
+          if (input.durationSec && input.durationSec > 0) {
+            job.progressPercent = Math.max(
+              0,
+              Math.min(100, (progressState.outTimeSec / input.durationSec) * 100),
+            );
+          }
         }
         if (progressState.speed) job.speed = progressState.speed;
         void this.persist(job);
@@ -115,6 +146,7 @@ export class JobManager {
         if (result.code === 0) {
           job.status = "completed";
           job.progressPercent = 100;
+          if (job.durationSeconds !== null) job.processedSeconds = job.durationSeconds;
         } else {
           job.status = "failed";
           job.error = result.stderr.trim() || `FFmpeg exited with code ${String(result.code)}.`;
@@ -151,8 +183,35 @@ export class JobManager {
   }
 
   private async persist(job: VideoJob): Promise<void> {
-    await mkdir(this.jobsDirectory, { recursive: true });
-    const path = join(this.jobsDirectory, `${job.id}.json`);
-    await writeFile(path, `${JSON.stringify(job, null, 2)}\n`, "utf8");
+    const validatedJob = videoJobSchema.parse(job);
+    const snapshot = `${JSON.stringify(validatedJob, null, 2)}\n`;
+    const targetPath = resolve(this.jobsDirectory, `${validatedJob.id}.json`);
+    if (resolve(this.jobsDirectory) !== dirname(targetPath)) {
+      throw new Error("Refusing to persist a video job outside the jobs directory.");
+    }
+
+    const previous = this.persistChains.get(validatedJob.id) ?? Promise.resolve();
+    const next = previous.catch(() => undefined).then(async () => {
+      await mkdir(this.jobsDirectory, { recursive: true });
+      const temporaryPath = join(
+        this.jobsDirectory,
+        `.${validatedJob.id}.${randomUUID()}.tmp`,
+      );
+      await writeFile(temporaryPath, snapshot, {
+        encoding: "utf8",
+        flag: "wx",
+        mode: 0o600,
+      });
+      await rename(temporaryPath, targetPath);
+    });
+    this.persistChains.set(validatedJob.id, next);
+
+    try {
+      await next;
+    } finally {
+      if (this.persistChains.get(validatedJob.id) === next) {
+        this.persistChains.delete(validatedJob.id);
+      }
+    }
   }
 }
