@@ -6,6 +6,12 @@ The project is currently in early preview, so behavior and tool schemas may chan
 
 ## Unreleased
 
+## 0.1.2 - 2026-09-07
+
+### Fixed
+
+- Stabilize the atomic job-persistence regression test by waiting for the queued terminal-state write before asserting its on-disk contents.
+
 ## 0.1.1 - 2026-09-07
 
 ### Fixed

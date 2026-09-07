@@ -1,6 +1,6 @@
 {
   "name": "lmstudio-local-video-tools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Native LM Studio video tools for local inspection, trimming, conversion and processing with FFmpeg.",
   "keywords": [

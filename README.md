@@ -6,17 +6,17 @@
 
 Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without turning a video encode into one giant tool call.
 
-[![Release](https://img.shields.io/github/v/release/sahansera/lmstudio-local-video-tools?include_prereleases&style=for-the-badge&label=Release)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1)
+[![Release](https://img.shields.io/github/v/release/sahansera/lmstudio-local-video-tools?include_prereleases=true&style=for-the-badge&label=Release)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
 [![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge)](LICENSE)
 ![LM Studio](https://img.shields.io/badge/LM%20Studio-Native%20Plugin-6C5CE7?style=for-the-badge)
 ![FFmpeg](https://img.shields.io/badge/FFmpeg-Local-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)
 
-[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1) · [Roadmap](docs/roadmap.md)
+[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Roadmap](docs/roadmap.md)
 
 </div>
 
-> **v0.1.1 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation. This patch release also hardens filesystem and persisted-job boundaries ahead of the public preview.
+> **v0.1.2 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation. This release also includes filesystem and persisted-job boundary hardening ahead of the public preview.
 
 ---
 
@@ -272,7 +272,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Se
 
 ### 🎬 Edit video with your local AI.
 
-[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.1) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
+[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
 
 MIT licensed.
 
