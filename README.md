@@ -2,9 +2,9 @@
 
 # 🎬 Local Video Tools for LM Studio
 
-### Edit video with your local AI.
+### Reliable video processing for your local AI.
 
-Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without turning a video encode into one giant tool call.
+Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without holding one AI tool call open for the duration of a video encode.
 
 [![Release](https://img.shields.io/github/v/tag/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release&color=brightgreen)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
@@ -19,6 +19,8 @@ Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Stu
 </div>
 
 > **v0.1.2 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation. This release also includes filesystem and persisted-job boundary hardening ahead of the public preview.
+
+> **What this is:** a reliable local execution layer for concrete video operations. **The model decides what operation to request; FFmpeg does the actual media processing locally.**
 
 ---
 
@@ -57,11 +59,11 @@ No FFmpeg command memorization. No separate MCP configuration. The model chooses
 
 ## 🎯 Why this exists
 
-A local model can understand what you want to do with a video, but the actual media work still needs a reliable execution layer.
+A local model can understand what you want to do with a video, but synchronous AI tool calls are a poor fit for real media-processing workloads.
 
-The obvious approach is to expose FFmpeg as a tool and wait for it to finish. That works until a real 4K HEVC transcode takes longer than the AI tool call is allowed to stay open.
+A short metadata lookup or stream-copy trim can finish quickly. A 4K HEVC transcode can take much longer than the tool call is allowed to stay open, even though FFmpeg itself is still doing perfectly valid work on the local machine.
 
-**Local Video Tools is built around that problem.**
+**Local Video Tools is built around that concrete execution problem.** Short operations run directly; expensive operations become background FFmpeg jobs that return a job ID immediately so the model can check progress, cancel work, and retrieve the result later.
 
 ```text
 Short / cheap operation
@@ -187,7 +189,7 @@ LM Studio conversation
           local output file
 ```
 
-The language model does not encode the video itself. It decides **what operation to request**; the plugin delegates the media work to the FFmpeg installation on your machine.
+The language model does not encode the video itself. **The model decides what operation to request; FFmpeg does the actual media processing locally.**
 
 ---
 
@@ -279,7 +281,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Se
 
 <div align="center">
 
-### 🎬 Edit video with your local AI.
+### 🎬 Reliable video processing for your local AI.
 
 [Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
 
