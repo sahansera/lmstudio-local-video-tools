@@ -6,10 +6,10 @@
 
 Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without turning a video encode into one giant tool call.
 
-[![Release](https://img.shields.io/github/v/release/sahansera/lmstudio-local-video-tools?include_prereleases=true&style=for-the-badge&label=Release)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
+[![Release](https://img.shields.io/github/v/tag/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release&color=brightgreen)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
-[![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge)](LICENSE)
-![LM Studio](https://img.shields.io/badge/LM%20Studio-Native%20Plugin-6C5CE7?style=for-the-badge)
+[![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge&color=brightgreen&cacheSeconds=300)](LICENSE)
+[![LM Studio Hub](https://img.shields.io/badge/LM%20Studio%20Hub-Install-6C5CE7?style=for-the-badge)](https://lmstudio.ai/sahansera/local-video-tools)
 ![FFmpeg](https://img.shields.io/badge/FFmpeg-Local-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)
 
 [Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Roadmap](docs/roadmap.md)
@@ -107,18 +107,27 @@ That workflow is the core reason this project exists.
 
 ## ⚡ Quick start
 
+### Install from LM Studio Hub
+
+1. Install FFmpeg and ffprobe locally. On macOS:
+
+   ```bash
+   brew install ffmpeg
+   ```
+
+2. Open [Local Video Tools on LM Studio Hub](https://lmstudio.ai/sahansera/local-video-tools) and select **Run in LM Studio**.
+3. Enable **Local Video Tools** under LM Studio **Integrations**.
+
+> Local Video Tools is a **native LM Studio plugin**. You do **not** need to clone the repository, install Node.js, or add it to `mcp.json` when installing from the Hub.
+
+### Develop from source
+
 ### Requirements
 
 - LM Studio with native TypeScript plugin support
 - Node.js 22 or newer
 - The LM Studio `lms` CLI available on your `PATH`
 - FFmpeg and ffprobe installed locally
-
-On macOS:
-
-```bash
-brew install ffmpeg
-```
 
 Clone and test:
 
@@ -130,15 +139,13 @@ npm run typecheck
 npm test
 ```
 
-Install/run it in LM Studio:
+Install/run the development build in LM Studio:
 
 ```bash
 lms dev --install
 ```
 
 Then enable **Local Video Tools** under LM Studio **Integrations**.
-
-> Local Video Tools is a **native LM Studio plugin**. You do **not** need to add it to `mcp.json`.
 
 ---
 

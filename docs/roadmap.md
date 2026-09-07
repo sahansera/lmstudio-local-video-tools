@@ -54,7 +54,7 @@ This roadmap describes the intended direction for Local Video Tools for LM Studi
 - [ ] Test matrix across macOS, Windows and Linux
 - [ ] Example media fixtures that can be redistributed legally
 - [x] First tagged release
-- [ ] LM Studio Hub submission
+- [x] LM Studio Hub submission
 - [ ] Installation and troubleshooting docs
 - [ ] Contributor documentation for adding new tools safely
 
