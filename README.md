@@ -6,7 +6,7 @@
 
 Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Studio — **locally**, with **hardware acceleration**, and without holding one AI tool call open for the duration of a video encode.
 
-[![Release](https://img.shields.io/github/v/tag/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release&color=brightgreen)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2)
+[![Release](https://img.shields.io/github/v/tag/sahansera/lmstudio-local-video-tools?style=for-the-badge&label=Release&color=brightgreen)](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.3)
 [![CI](https://img.shields.io/github/actions/workflow/status/sahansera/lmstudio-local-video-tools/test.yml?branch=main&style=for-the-badge&label=Build)](https://github.com/sahansera/lmstudio-local-video-tools/actions/workflows/test.yml)
 [![License](https://img.shields.io/github/license/sahansera/lmstudio-local-video-tools?style=for-the-badge&color=brightgreen&cacheSeconds=300)](LICENSE)
 ![LM Studio](https://img.shields.io/badge/LM%20Studio-Native%20Plugin-6C5CE7?style=for-the-badge)
@@ -14,11 +14,11 @@ Inspect, trim, convert, and manage long-running FFmpeg jobs directly from LM Stu
 
 [![Add to LM Studio](https://img.shields.io/badge/Add%20to-LM%20Studio-6C5CE7?style=for-the-badge)](https://lmstudio.ai/sahansera/local-video-tools)
 
-[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Roadmap](docs/roadmap.md)
+[Try the prompts](#-try-these-prompts) · [Install](#-quick-start) · [How it works](#-how-it-works) · [Latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.3) · [Roadmap](docs/roadmap.md)
 
 </div>
 
-> **v0.1.2 Early Preview is out.** The core workflow has been validated with real **4K HEVC/H.265 MOV video on Apple Silicon**, including lossless clipping, accurate re-encoding, VideoToolbox conversion, progress tracking, and cancellation. This release also includes filesystem and persisted-job boundary hardening ahead of the public preview.
+> **v0.1.3 Early Preview is out.** This presentation-focused release adds a clearer plugin icon, direct LM Studio Hub installation guidance, and sharper positioning around reliable background video processing. Runtime behavior is unchanged from v0.1.2.
 
 > **What this is:** a reliable local execution layer for concrete video operations. **The model decides what operation to request; FFmpeg does the actual media processing locally.**
 
@@ -283,7 +283,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Se
 
 ### 🎬 Reliable video processing for your local AI.
 
-[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.2) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
+[Download the latest release](https://github.com/sahansera/lmstudio-local-video-tools/releases/tag/v0.1.3) · [Report a bug](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/sahansera/lmstudio-local-video-tools/issues/new?template=feature_request.yml)
 
 MIT licensed.
 
