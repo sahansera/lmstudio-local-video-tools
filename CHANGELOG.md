@@ -6,6 +6,15 @@ The project is currently in early preview, so behavior and tool schemas may chan
 
 ## Unreleased
 
+## 0.1.3 - 2026-09-25
+
+### Changed
+
+- Replace the plugin thumbnail with a simpler video-and-AI mark that remains clear at small sizes.
+- Clarify the plugin's reliable local video-processing and background-job positioning.
+- Add a direct LM Studio Hub install button and Hub-first installation instructions.
+- Link the README title back to the GitHub repository.
+
 ## 0.1.2 - 2026-09-07
 
 ### Fixed
