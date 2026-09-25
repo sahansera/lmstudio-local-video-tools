@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎬 Local Video Tools for LM Studio
+# 🎬 [Local Video Tools for LM Studio](https://github.com/sahansera/lmstudio-local-video-tools)
 
 ### Reliable video processing for your local AI.
 
